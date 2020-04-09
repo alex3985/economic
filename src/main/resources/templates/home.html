@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>COCOMO Calculator</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<header></header>
+<form>
+    <select name="system-type">
+        <option th:each="systemType: ${systemTypeList}" th:value="${systemType.id}" th:text="${systemType.name}"/>
+    </select>
+    <select name="complexity">
+        <option th:each="systemType: ${systemTypeList[0].capacityList}" th:value="${systemType.systemComplexity.id}" th:text="${systemType.systemComplexity.name}"/>
+    </select>
+    <input name="coefficient-a" th:value="${systemTypeList[0].coefficientA.value}">
+    <input name="coefficient-e" th:value="${systemTypeList[0].coefficientE.value}">
+    <input name="coefficient-g" th:value="${systemTypeList[0].coefficientG.value}">
+    <input name="coefficient-h" th:value="${systemTypeList[0].coefficientH.value}">
+</form>
+<footer></footer>
+</body>
+</html>

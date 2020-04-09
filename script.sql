@@ -106,18 +106,6 @@ VALUES (2,2);
 INSERT INTO system_type_coefficient_h (system_type_id, coef_h_id)
 VALUES (3,3);
 
-CREATE TABLE kloc_capacity (
-	capacity_id INT AUTO_INCREMENT PRIMARY KEY,
-	capacity INT NOT NULL
-);
-
-INSERT INTO kloc_capacity (capacity) VALUES (300);
-INSERT INTO kloc_capacity (capacity) VALUES (500);
-INSERT INTO kloc_capacity (capacity) VALUES (100);
-INSERT INTO kloc_capacity (capacity) VALUES (200);
-INSERT INTO kloc_capacity (capacity) VALUES (35);
-INSERT INTO kloc_capacity (capacity) VALUES (50);
-
 CREATE TABLE system_complexity (
 	complexity_id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(255) NOT NULL
@@ -126,35 +114,21 @@ CREATE TABLE system_complexity (
 INSERT INTO system_complexity (name) VALUES ("B1");
 INSERT INTO system_complexity (name) VALUES ("B2");
 
-CREATE TABLE complexity_kloc_capacity (
-	complexity_capacity_id INT AUTO_INCREMENT PRIMARY KEY,
-	complexity_id INT,
-	capacity_id INT,
-	FOREIGN KEY (complexity_id) REFERENCES system_complexity (complexity_id),
-	FOREIGN KEY (capacity_id) REFERENCES kloc_capacity (capacity_id)
-);
-
-INSERT INTO complexity_kloc_capacity (complexity_id, capacity_id) VALUES (1,1);
-INSERT INTO complexity_kloc_capacity (complexity_id, capacity_id) VALUES (1,3);
-INSERT INTO complexity_kloc_capacity (complexity_id, capacity_id) VALUES (1,5);
-INSERT INTO complexity_kloc_capacity (complexity_id, capacity_id) VALUES (2,2);
-INSERT INTO complexity_kloc_capacity (complexity_id, capacity_id) VALUES (2,4);
-INSERT INTO complexity_kloc_capacity (complexity_id, capacity_id) VALUES (2,6);
-
 CREATE TABLE complexity_kloc_capacity_system_type (
 	complexity_capacity_system_type_id INT AUTO_INCREMENT PRIMARY KEY,
 	system_type_id INT,
-	complexity_capacity_id INT,
-	FOREIGN KEY (system_type_id) REFERENCES system_type  (system_type_id),
-	FOREIGN KEY (complexity_capacity_id) REFERENCES complexity_kloc_capacity (complexity_capacity_id)
+	complexity_id INT,
+    capacity INT,
+	FOREIGN KEY (system_type_id) REFERENCES system_type (system_type_id),
+	FOREIGN KEY (complexity_id) REFERENCES system_complexity (complexity_id)
 );
 
-INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_capacity_id) VALUES (1,1);
-INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_capacity_id) VALUES (1,4);
-INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_capacity_id) VALUES (2,2);
-INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_capacity_id) VALUES (2,5);
-INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_capacity_id) VALUES (3,3);
-INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_capacity_id) VALUES (3,6);
+INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_id, capacity) VALUES (1,1, 300);
+INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_id, capacity) VALUES (1,2, 500);
+INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_id, capacity) VALUES (2,1, 100);
+INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_id, capacity) VALUES (2,2, 200);
+INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_id, capacity) VALUES (3,1, 35);
+INSERT INTO complexity_kloc_capacity_system_type (system_type_id, complexity_id, capacity) VALUES (3,2, 50);
 
 CREATE TABLE type_grade (
 	type_grade_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -187,8 +161,7 @@ CREATE TABLE coefficient_changing_complexity_production_pc (
 	type_grade_id INT,
 	value FLOAT NOT NULL,
 	FOREIGN KEY (factor_id) REFERENCES factor_changing_complexity_intensity (factor_id),
-	FOREIGN KEY (type_grade_id) REFERENCES type_grade
-(type_grade_id)
+	FOREIGN KEY (type_grade_id) REFERENCES type_grade (type_grade_id)
 );
 
 INSERT INTO coefficient_changing_complexity_production_pc (factor_id, type_grade_id, value) VALUES (1,1,0.83);
