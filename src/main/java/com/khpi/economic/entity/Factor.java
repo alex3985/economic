@@ -1,9 +1,7 @@
 package com.khpi.economic.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "factor_changing_complexity_intensity")
@@ -18,6 +16,11 @@ public class Factor {
 
     @Column(name = "content_factor")
     private String contentFactor;
+
+    @OneToMany()
+    @JoinColumn(name = "factor_id")
+    private List<CoefficientComplexityProduction> coefficientProductionList;
+
 
     public int getId() {
         return id;
@@ -43,4 +46,11 @@ public class Factor {
         this.contentFactor = contentFactor;
     }
 
+    public List<CoefficientComplexityProduction> getCoefficientProductionList() {
+        return coefficientProductionList;
+    }
+
+    public void setCoefficientProductionList(List<CoefficientComplexityProduction> coefficientProductionList) {
+        this.coefficientProductionList = coefficientProductionList;
+    }
 }

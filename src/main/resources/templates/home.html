@@ -6,18 +6,46 @@
 </head>
 <body>
 <header></header>
-<form>
-    <select name="system-type">
-        <option th:each="systemType: ${systemTypeList}" th:value="${systemType.id}" th:text="${systemType.name}"/>
-    </select>
-    <select name="complexity">
-        <option th:each="systemType: ${systemTypeList[0].capacityList}" th:value="${systemType.systemComplexity.id}" th:text="${systemType.systemComplexity.name}"/>
-    </select>
-    <input name="coefficient-a" th:value="${systemTypeList[0].coefficientA.value}">
-    <input name="coefficient-e" th:value="${systemTypeList[0].coefficientE.value}">
-    <input name="coefficient-g" th:value="${systemTypeList[0].coefficientG.value}">
-    <input name="coefficient-h" th:value="${systemTypeList[0].coefficientH.value}">
-</form>
+<select class="system-type">
+    <option th:each="systemType: ${systemTypeList}" th:value="${systemType.id}" th:text="${systemType.name}"/>
+</select>
+<select name="complexity">
+    <option th:each="systemType: ${systemTypeList[0].capacityList}" th:value="${systemType.systemComplexity.id}"
+            th:text="${systemType.systemComplexity.name}"/>
+</select>
+<input name="coefficient-a" class="coefficient-a" th:value="${systemTypeList[0].coefficientA.value}">
+<input name="coefficient-e" class="coefficient-e" th:value="${systemTypeList[0].coefficientE.value}">
+<input name="coefficient-g" class="coefficient-g" th:value="${systemTypeList[0].coefficientG.value}">
+<input name="coefficient-h" class="coefficient-h" th:value="${systemTypeList[0].coefficientH.value}">
+<table style="width:300px">
+    <tr th:each="factor : ${factorList}">
+        <td><p th:text="${factor.name}"></p></td>
+        <td><p th:text="${factor.contentFactor}"></p></td>
+        <td><select name="coefficientProduction">
+            <option th:each="coefficientProduction: ${factor.coefficientProductionList}"
+                    th:value="${coefficientProduction.value}"
+                    th:text="${coefficientProduction.typeGradeList.name}"/>
+        </select></td>
+    </tr>
+</table>
+<div>
+    <button class="button-labor-input">Расчитать метрики</button>
+    <div></div>
+</div>
 <footer></footer>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    var systemTypes;
+    $.getJSON("home", function (data) {
+        systemTypes = data;
+    });
+    $(".system-type").change(function () {
+        $(".coefficient-a").val(systemTypes[this.value - 1].coefficientA.value);
+        $(".coefficient-e").val(systemTypes[this.value - 1].coefficientE.value);
+        $(".coefficient-g").val(systemTypes[this.value - 1].coefficientG.value);
+        $(".coefficient-h").val(systemTypes[this.value - 1].coefficientH.value);
+    });
+</script>
+
 </html>
