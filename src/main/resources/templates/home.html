@@ -3,37 +3,80 @@
 <head>
     <title>COCOMO Calculator</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
-<body>
-<header></header>
-<select class="system-type">
-    <option th:each="systemType: ${systemTypeList}" th:value="${systemType.id}" th:text="${systemType.name}"/>
-</select>
-<select name="complexity">
-    <option th:each="systemType: ${systemTypeList[0].capacityList}" th:value="${systemType.systemComplexity.id}"
-            th:text="${systemType.systemComplexity.name}"/>
-</select>
-<input name="coefficient-a" class="coefficient-a" th:value="${systemTypeList[0].coefficientA.value}">
-<input name="coefficient-e" class="coefficient-e" th:value="${systemTypeList[0].coefficientE.value}">
-<input name="coefficient-g" class="coefficient-g" th:value="${systemTypeList[0].coefficientG.value}">
-<input name="coefficient-h" class="coefficient-h" th:value="${systemTypeList[0].coefficientH.value}">
-<table style="width:300px">
-    <tr th:each="factor : ${factorList}">
-        <td><p th:text="${factor.name}"></p></td>
-        <td><p th:text="${factor.contentFactor}"></p></td>
-        <td><select name="coefficientProduction">
-            <option th:each="coefficientProduction: ${factor.coefficientProductionList}"
-                    th:value="${coefficientProduction.value}"
-                    th:text="${coefficientProduction.typeGradeList.name}"/>
-        </select></td>
-    </tr>
-</table>
-<div>
-    <button class="button-labor-input">Расчитать метрики</button>
-    <div></div>
+<body class="container">
+<header><h1>COCOMO калькулятор</h1></header>
+<div class="container">
+    <div class="col-sm-8">
+        <label for="system-type">Тип системы</label>
+        <select id="system-type" class="system-type form-control">
+            <option th:each="systemType: ${systemTypeList}" th:value="${systemType.id}" th:text="${systemType.name}"/>
+        </select>
+    </div>
+    <div class="col-sm-4">
+        <label for="complexity">Размер</label>
+        <select id="complexity" class="complexity form-control">
+            <option th:each="systemType: ${systemTypeList[0].capacityList}" th:value="${systemType.systemComplexity.id}"
+                    th:text="${systemType.systemComplexity.name}"/>
+        </select>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="">
+            <label for="coefficient-a">Coefficient A:</label>
+            <input id="coefficient-a" class="coefficient-a form-control"
+                   th:value="${systemTypeList[0].coefficientA.value}" disabled>
+        </div>
+        <div>
+            <label for="coefficient-e">Coefficient E:</label>
+            <input id="coefficient-e" class="coefficient-e form-control disabled "
+                   th:value="${systemTypeList[0].coefficientE.value}" disabled>
+        </div>
+    </div>
+    <div class="row">
+        <label for="coefficient-g">Coefficient G:</label>
+        <input id="coefficient-g" class="coefficient-g form-control"
+               th:value="${systemTypeList[0].coefficientG.value}" disabled>
+        <label for="coefficient-h">Coefficient H:</label>
+        <input id="coefficient-h" class="coefficient-h form-control"
+               th:value="${systemTypeList[0].coefficientH.value}" disabled>
+    </div>
+</div>
+<div class="container">
+    <table class="table table-hover">
+        <tr>
+            <th>Символ</th>
+            <th>Содержание факторов</th>
+            <th>Рейтинги оценки</th>
+        </tr>
+        <tr th:each="factor : ${factorList}">
+            <td><p th:text="${factor.name}"></p></td>
+            <td><p th:text="${factor.contentFactor}"></p></td>
+            <td><select class="coefficientProduction form-control">
+                <option th:each="coefficientProduction: ${factor.coefficientProductionList}"
+                        th:value="${coefficientProduction.value}"
+                        th:text="${coefficientProduction.typeGradeList.name}"/>
+            </select></td>
+        </tr>
+    </table>
+</div>
+<div class="row">
+    <div class="row">
+        <button class="button-metric-calculate">Расчитать метрики</button>
+    </div>
+    <div class="row">
+        <div>Полная трудоемкость производства ПП: <p class="laborInput"></p></div>
+        <div>Полная длительность производства ПП: <p class="durationProduction"></p></div>
+        <div>Необходимое среднее число специалистов: <p class="averageNumberSpecialists"></p></div>
+        <div>Средняя производительность труда специалистов: <p class="averageProductivitySpecialists"></p></div>
+    </div>
 </div>
 <footer></footer>
 </body>
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
     var systemTypes;
@@ -45,6 +88,48 @@
         $(".coefficient-e").val(systemTypes[this.value - 1].coefficientE.value);
         $(".coefficient-g").val(systemTypes[this.value - 1].coefficientG.value);
         $(".coefficient-h").val(systemTypes[this.value - 1].coefficientH.value);
+    });
+    $(".button-metric-calculate").click(function () {
+        var capacity;
+        systemTypes[$('.system-type').val() - 1].capacityList.forEach((element) => {
+            if (element.systemComplexity.id == $('.complexity').val()) {
+                capacity = element.capacity;
+            }
+        });
+        var coefA = $('.coefficient-a').val();
+        var coefE = $('.coefficient-e').val();
+        var coefG = $('.coefficient-g').val();
+        var coefH = $('.coefficient-h').val();
+        var coefMArray = [];
+        $('select.coefficientProduction :selected').each(function () {
+            coefMArray.push($(this).val());
+        });
+        var formData = {
+            'capacity': capacity,
+            'coefA': coefA,
+            'coefE': coefE,
+            'coefG': coefG,
+            'coefH': coefH,
+            'coefMArray': coefMArray
+        };
+        $.ajax({
+            type: "POST",
+            url: "/home",
+            data: JSON.stringify(formData),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    $(".laborInput").text(data.laborInput);
+                    $(".durationProduction").text(data.durationProduction);
+                    $(".averageNumberSpecialists").text(data.averageNumberSpecialists);
+                    $(".averageProductivitySpecialists").text(data.averageProductivitySpecialists);
+                }
+            },
+            failure: function (errMsg) {
+                alert(errMsg);
+            }
+        });
     });
 </script>
 
